@@ -1,0 +1,7 @@
+---
+# handlers file for vmi_project_ansible
+
+- name: restart nginx
+  service:
+    name: nginx
+    state: restarted

@@ -1,0 +1,17 @@
+---
+
+- name: Installation de tout
+  hosts: all
+  become: true
+  roles:
+    - tout
+  gather_facts: False
+  pre_tasks:
+    - name: Install python for Ansible
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      register: output
+      changed_when: output.stdout != ""
+      tags: always
+  tasks:
+    - name: start nginx
+      action: service name=nginx state=started enabled=yes

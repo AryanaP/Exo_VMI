@@ -1,0 +1,76 @@
+---
+# tâches pour installer js
+# récupérer le bon fichier
+- name: Install nodejs & npm & update apt
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: "yes"
+  with_items:
+    - nodejs-legacy
+    - npm
+
+- name: Install express
+  npm:
+    name: express
+    state: present
+    path: /home/ubuntu
+
+- name: Install myIP node_module
+  npm:
+    name: my-ip
+    state: present
+    path: /home/ubuntu
+
+- name: Add js file to machine
+  template:
+    src: home.js.j2
+    dest: /home/ubuntu/home.js
+    # remote_src: yes
+
+- name: Install pm2
+  npm:
+    name: pm2
+    global: true
+    state: present
+
+- name: Add pm2 conf file
+  template:
+    src: conf_pm2.json.j2
+    dest: /home/ubuntu/conf_pm2.json
+    # remote_src: yes
+
+- name: start pm2
+  become: true
+  command: pm2 startOrGracefulReload /home/ubuntu/conf_pm2.json --update-env
+
+- name: script startup pm2
+  become: true
+  command: pm2 startup
+
+- name: save pm2
+  become: true
+  command: pm2 save
+
+- name: Install nginx key
+  apt_key:
+    url: http://nginx.org/keys/nginx_signing.key
+    state: present
+
+- name: Add nginx conf to sources.list.d
+  template:
+    src: sources.list.j2
+    dest: /etc/apt/sources.list.d/ngnix.list
+    # remote_src: yes
+
+- name: Install nginx
+  apt:
+    name: nginx
+    state: latest
+    update_cache: "yes"
+
+- name: Add nginx default.conf to conf.d and restart nginx
+  template:
+    src: default.conf.j2
+    dest: /etc/nginx/conf.d/default.conf
+    # remote_src: yes
