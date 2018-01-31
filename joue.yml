@@ -4,10 +4,11 @@
   hosts: all
   become: true
   roles:
-    - tout
+    - super_role
   gather_facts: False
   pre_tasks:
     - name: Install python for Ansible
+      become: true
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
       register: output
       changed_when: output.stdout != ""
