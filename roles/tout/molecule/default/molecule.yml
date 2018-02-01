@@ -7,7 +7,9 @@ lint:
   name: yamllint
 platforms:
   - name: instance
-    image: solita/ubuntu-systemd:16.04
+    image: centos/systemd
+    privileged: True
+    command: /usr/sbin/init
 provisioner:
   name: ansible
   lint:

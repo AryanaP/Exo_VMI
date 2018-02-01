@@ -1,13 +1,18 @@
 ---
 # tâches pour installer js
 # récupérer le bon fichier
+- name: Install epel-release
+  yum:
+    name: epel-release
+    state: present
+
 - name: Install nodejs & npm & update apt
-  apt:
+  yum:
     name: "{{ item }}"
     state: present
     update_cache: "yes"
   with_items:
-    - nodejs-legacy
+    - nodejs
     - npm
 
 - name: Install express
@@ -52,19 +57,19 @@
   become: true
   command: pm2 save
 
-- name: Install nginx key
-  apt_key:
-    url: http://nginx.org/keys/nginx_signing.key
-    state: present
+# - name: Install nginx key
+#   apt_key:
+#     url: http://nginx.org/keys/nginx_signing.key
+#     state: present
 
 - name: Add nginx conf to sources.list.d
   template:
-    src: sources.list.j2
-    dest: /etc/apt/sources.list.d/ngnix.list
+    src: nginx.repo.j2
+    dest: /etc/yum.repos.d/nginx.repo
     # remote_src: yes
 
 - name: Install nginx
-  apt:
+  yum:
     name: nginx
     state: latest
     update_cache: "yes"
