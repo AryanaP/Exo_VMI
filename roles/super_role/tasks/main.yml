@@ -66,7 +66,7 @@
 - name: Install nginx
   apt:
     name: nginx
-    state: latest
+    state: 1.12.1
     update_cache: "yes"
 
 - name: Add nginx default.conf to conf.d and restart nginx
